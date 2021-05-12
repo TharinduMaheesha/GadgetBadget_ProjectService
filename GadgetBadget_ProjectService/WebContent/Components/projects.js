@@ -147,3 +147,43 @@ function onProjectSaveComplete(response, status)
 		 $("#formItem")[0].reset(); 
 }
 
+$(document).on("click", ".btnRemove", function(event)
+{ 
+ $.ajax( 
+ { 
+ url : "ProjectAPI", 
+ type : "DELETE", 
+ data : "projectID=" + $(this).data("projectid"),
+ dataType : "text", 
+ complete : function(response, status) 
+ { 
+ onItemDeleteComplete(response.responseText, status); 
+ } 
+ }); 
+});
+
+function onItemDeleteComplete(response, status)
+{ 
+if (status == "success") 
+ { 
+ var resultSet = JSON.parse(response); 
+ if (resultSet.status.trim() == "success") 
+ { 
+ $("#alertSuccess").text("Successfully deleted."); 
+ $("#alertSuccess").show(); 
+ $("#finprojectscontainer").html(resultSet.data); 
+ } else if (resultSet.status.trim() == "error") 
+ { 
+ $("#alertError").text(resultSet.data); 
+ $("#alertError").show(); 
+ } 
+ } else if (status == "error") 
+ { 
+ $("#alertError").text("Error while deleting."); 
+ $("#alertError").show(); 
+ } else
+ { 
+ $("#alertError").text("Unknown error while deleting.."); 
+ $("#alertError").show(); 
+ } 
+}
