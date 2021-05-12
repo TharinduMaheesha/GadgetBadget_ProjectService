@@ -189,8 +189,9 @@ public class Project {
 
 			 con.close();
 			 
-			 output = "Project updated successfully";
-			 }
+			 String newItems = readFinishedProjects("1002"); 
+			 output = "{\"status\":\"success\", \"data\": \"" + 
+			 newItems + "\"}"; 			 }
 			 catch (Exception e)
 			 {
 				 output = "Error while updating the Project.";
@@ -309,7 +310,7 @@ public class Project {
 				 output += "<td>" + status + "</td>";
 				 
 				 output += "<td><input name='btnUpdate' type='button' value='Update' "
-							+ "class='btnUpdate btn btn-secondary' data-itemid='" + projectid + "'></td>"
+							+ "class='btnUpdate btn btn-secondary' data-projectid='" + projectid + "'></td>"
 							+ "<td><input name='btnRemove' type='button' value='Remove' "
 							+ "class='btnRemove btn btn-danger' data-projectid='" + projectid + "'></td></tr>"; 
 			 

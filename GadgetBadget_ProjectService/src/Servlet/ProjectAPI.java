@@ -62,6 +62,16 @@ public class ProjectAPI extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		System.out.println("Got here");
+		Map paras = getParasMap(request); 
+		String id = paras.get("hidProjectIDSave").toString();
+		String topic = paras.get("projectName").toString();
+		String price = paras.get("projFund").toString();
+		String researcherID = "1002";
+		System.out.println(id+topic+price+researcherID);
+		
+		 String output = projObj.updateFinishedProject(id, topic, price, researcherID); 
+		response.getWriter().write(output); 
 	}
 
 	/**

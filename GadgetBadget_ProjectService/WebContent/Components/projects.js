@@ -98,7 +98,7 @@ $(document).on("click", "#btnSave", function(event)
 		 return; 
 	 } 
 	// If valid------------------------
-	var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT"; 
+	var type = ($("#hidProjectIDSave").val() == "") ? "POST" : "PUT"; 
 	 $.ajax( 
 	 { 
 		 url : "ProjectAPI", 
@@ -187,3 +187,10 @@ if (status == "success")
  $("#alertError").show(); 
  } 
 }
+
+$(document).on("click", ".btnUpdate", function(event)
+{ 
+$("#hidProjectIDSave").val($(this).data("projectid")); 
+ $("#projectName").val($(this).closest("tr").find('td:eq(1)').text()); 
+ $("#projFund").val($(this).closest("tr").find('td:eq(2)').text()); 
+});

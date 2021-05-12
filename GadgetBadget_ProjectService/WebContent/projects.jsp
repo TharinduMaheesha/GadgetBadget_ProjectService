@@ -18,7 +18,7 @@
 	
 		<div class="row" id = "formContainer">
 			<div class="col-6"> 
-				 <form id="formProject" name="formItem">
+				 <form id="formProject" name="formProject">
 					 Project Topic: 
 					 <input id="projectName" name="projectName" type="text" 
 					 class="form-control form-control-sm">
@@ -39,8 +39,8 @@
 					 class="btn btn-primary">
 					 <input id="btnCancel" name="btnSave" type="button" value="Cancel" 
 					 class="btn btn-danger">
-					 <input type="hidden" id="hidItemIDSave" 
-					 name="hidItemIDSave" value="">
+					 <input type="hidden" id="hidProjectIDSave" 
+					 name="hidProjectIDSave" value="">
 				</form>
 				
 				<div id="alertSuccess" class="alert alert-success" style = "margin-top : 20px"></div>
