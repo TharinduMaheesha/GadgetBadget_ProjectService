@@ -40,8 +40,8 @@ public class Project {
 				}
 				
 			// create a prepared statements
-			String query = " insert into project values (NULL,?,?,?)";
-			String query2 = " insert into finished values (LAST_INSERT_ID(),?,NULL,NULL,?)";
+			String query = " insert into project values (NULL,?,?,?,NULL)";
+			String query2 = " insert into finished values (LAST_INSERT_ID(),?,NULL,?)";
 
 			 PreparedStatement preparedStmt = con.prepareStatement(query);
 			 PreparedStatement preparedStmt2 = con.prepareStatement(query2);
@@ -60,8 +60,9 @@ public class Project {
 
 			 con.close();
 			 
-			 output = "Project inserted successfully";
-			 }
+			 String newItems = readFinishedProjects("1002"); 
+			 output = "{\"status\":\"success\", \"data\": \"" + 
+			 newItems + "\"}";			 }
 			 catch (Exception e)
 			 {
 				 output = "Error while inserting the Project.";
@@ -85,8 +86,8 @@ public class Project {
 				}
 				
 			// create a prepared statements
-			String query = " insert into project values (NULL,?,?,?)";
-			String query2 = " insert into unfinished values (LAST_INSERT_ID(),?,NULL,?)";
+			String query = " insert into project values (NULL,?,?,?,NULL)";
+			String query2 = " insert into unfinished values (LAST_INSERT_ID(),?,?)";
 
 			 PreparedStatement preparedStmt = con.prepareStatement(query);
 			 PreparedStatement preparedStmt2 = con.prepareStatement(query2);
@@ -105,8 +106,9 @@ public class Project {
 
 			 con.close();
 			 
-			 output = "Project inserted successfully";
-			 }
+			 String newItems = readUnfinishedProjects("1002"); 
+			 output = "{\"status\":\"success\", \"data\": \"" + 
+			 newItems + "\"}";				 }
 			 catch (Exception e)
 			 {
 				 output = "Error while inserting the Project.";
@@ -243,12 +245,12 @@ public class Project {
 	
 	public String readFinishedProjects(String researcherID)
 	{
-		String  output = "<table border='1' class = 'table tale-hover'><thead class=\"thead-dark\" ><tr><th>ProjectID</th><th>Project Name</th>" +
+		String  output = "<table border='1'><tr><th>ProjectID</th><th>Project Name</th>" +
 				 "<th>Project Price</th>" +
 				 "<th> Status</th>" +
 				 "<th> Client</th>" +
 				 "<th> Payment Status</th>" +
-				 "<th>Update</th><th>Remove</th></tr></thead>";
+				 "<th>Update</th><th>Remove</th></tr>";
 		
 		try
 		{
@@ -260,29 +262,40 @@ public class Project {
 				}
 				
 			// create a prepared statement
-			String query = "Select * from finished f , project p , client r , user u where p.pid = f.pid and "
-					+ "f.clientId = r.clientId and r.clientId = u.userid  and f.researcherid =?";
-	 
-			 PreparedStatement preparedStmt = con.prepareStatement(query);
-			 preparedStmt.setString(1, researcherID);
+				String query = "Select * from finished f , project p  where p.pid = f.pid  and f.researcherid =?";
+				String query2 = "Select * from user  where userid=?";
+
+		 
+				 PreparedStatement preparedStmt = con.prepareStatement(query);
+				 PreparedStatement preparedStmt2;
+				 preparedStmt.setString(1, researcherID);
 
 			 //Creating resultset to read values from the database
 			 ResultSet rs = preparedStmt.executeQuery();
-			 
+			 ResultSet rs2 ;
 			 while(rs.next()) {
 				 String projectid = rs.getString("pid");
 				 String name = rs.getString("topic");
 				 String clientID = rs.getString("clientid");
 
-				 String client = rs.getString("firstName")+" " + rs.getString("lastName");
 				 String status = rs.getString("status");
 				 String price = rs.getString("price");
-				 
+				 String client = "";
+
 				 output += "<tr><td>" + projectid + "</td>";
 				 output += "<td>" + name + "</td>";
 				 output += "<td>" + price + "</td>";
 				 
-				 if(client == null) {
+				 preparedStmt2 = con.prepareStatement(query2);
+				 preparedStmt2.setString(1, clientID);
+				 rs2 = preparedStmt2.executeQuery();
+				 while(rs2.next()) {
+					  client = rs2.getString("firstName")+" " + rs2.getString("lastName");
+
+					 
+				 }
+				 
+				 if(client == "") {
 					 output += "<td> Not Sold</td>";
 				 	 output += "<td> None </td>";
 				 }
@@ -315,12 +328,12 @@ public class Project {
 	
 	public String readUnfinishedProjects(String researcherID)
 	{
-		String  output = "<table border='1' class = 'table tale-hover'><thead class=\"thead-dark\" ><tr><th>ProjectID</th><th>Project Name</th>" +
+		String  output = "<table border='1'><tr><th>ProjectID</th><th>Project Name</th>" +
 				 "<th>Funds Required</th>" +
 				 "<th> Status</th>" +
 				 "<th> Client</th>" +
 				 "<th> Fund Status</th>" +
-				 "<th>Update</th><th>Remove</th></tr></thead>";
+				 "<th>Update</th><th>Remove</th></tr>";
 		
 		try
 		{
@@ -332,27 +345,41 @@ public class Project {
 				}
 				
 			// create a prepared statement
-			String query = "Select * from unfinished f , project p , client r , user u where p.pid = f.pid and "
-					+ "f.clientId = r.clientId and r.clientId = u.userid  and f.researcherid =?";
+			String query = "Select * from unfinished f , project p  where p.pid = f.pid and f.researcherid =?";
 	 
 			 PreparedStatement preparedStmt = con.prepareStatement(query);
 			 preparedStmt.setString(1, researcherID);
 			 
 			 //Creating resultset to read values from the database
 			 ResultSet rs = preparedStmt.executeQuery();
+			 ResultSet rs2;
+
+			 String query2 = "Select * from user  where userid=?";
+
+			 PreparedStatement preparedStmt2;
+			 preparedStmt.setString(1, researcherID);
 			 
 			 while(rs.next()) {
 				 String projectid = rs.getString("pid");
 				 String name = rs.getString("topic");
-				 String client = rs.getString("firstName")+" " + rs.getString("lastName");
+				 String clientID = rs.getString("clientID");
 				 String status = rs.getString("status");
 				 String price = rs.getString("requiredAmount");
-				 
+				 String client = "";
 				 output += "<tr><td>" + projectid + "</td>";
 				 output += "<td>" + name + "</td>";
 				 output += "<td>" + price + "</td>";
 				 
-				 if(client == null) {
+				 preparedStmt2 = con.prepareStatement(query2);
+				 preparedStmt2.setString(1, clientID);
+				 rs2 = preparedStmt2.executeQuery();
+				 while(rs2.next()) {
+					  client = rs2.getString("firstName")+" " + rs2.getString("lastName");
+
+					 
+				 }
+				 
+				 if(client == "") {
 					 output += "<td> Not Funded</td>";
 				 	 output += "<td> None </td>";
 				 }
@@ -390,10 +417,10 @@ public class Project {
 	
 	public String readUnfinishedProjects()
 	{
-		String  output = "<table border='1'class = 'table tale-hover'><thead class=\"thead-dark\" ><tr><th>ProjectID</th>"
+		String  output = "<table border='1'><tr><th>ProjectID</th>"
 				+ "<th>Project Name</th>" +
 				 "<th>Funds Required</th>" +
-				 "<th>Researcher</th></thead>" ;
+				 "<th>Researcher</th>" ;
 		
 		try
 		{
@@ -405,20 +432,33 @@ public class Project {
 				}
 				
 			// create a prepared statement
-			String query = "Select * from unfinished f , project p , researcher r , user u where p.pid = f.pid and p.researcherid = r.researcherid"
-					+ " and r.researcherid = u.userid and f.clientid is null";
+			String query = "Select * from unfinished f , project p  where p.pid = f.pid and p.clientid is null";
+			String query2 = "select * from user where userid = ?";
 	 
 			 PreparedStatement preparedStmt = con.prepareStatement(query);
 			 
 			 //Creating resultset to read values from the database
 			 ResultSet rs = preparedStmt.executeQuery();
+			 ResultSet rs2 ;
 			 
 			 while(rs.next()) {
 				 String projectid = rs.getString("pid");
 				 String name = rs.getString("topic");
-				 String researcher = rs.getString("firstName") + " " + rs.getString("lastName");
+				 String id = rs.getString("researcherid");
+				 String researcher = "";
 				 String status = rs.getString("status");
 				 String price = rs.getString("requiredAmount");
+				 
+				 PreparedStatement preparedStmt2 = con.prepareStatement(query2);
+				 preparedStmt2.setString(1, id);
+				 rs2 = preparedStmt2.executeQuery();
+				 
+				 while(rs2.next()) {
+					  researcher = rs2.getString("firstName") + " " + rs2.getString("lastName");
+
+					 
+				 }
+
 				 
 				 output += "<tr><td>" + projectid + "</td>";
 				 output += "<td>" + name + "</td>";
@@ -446,10 +486,10 @@ public class Project {
 	
 	public String readfinishedProjects()
 	{
-		String  output = "<table border='1'class = 'table tale-hover'><thead class=\"thead-dark\" ><tr><th>ProjectID</th>"
+		String  output = "<table border='1'><tr><th>ProjectID</th>"
 				+ "<th>Project Name</th>" +
 				 "<th>Price</th>" +
-				 "<th>Researcher</th></thead>" ;
+				 "<th>Researcher</th>" ;
 		
 		try
 		{
@@ -461,20 +501,30 @@ public class Project {
 				}
 				
 			// create a prepared statement
-			String query = "Select * from finished f , project p , researcher r , user u where p.pid = f.pid and p.researcherid = r.researcherid"
-					+ " and r.researcherid = u.userid and f.clientid is null";
-	 
-			 PreparedStatement preparedStmt = con.prepareStatement(query);
-			 
-			 //Creating resultset to read values from the database
-			 ResultSet rs = preparedStmt.executeQuery();
-			 
+				String query = "Select * from finished f , project p  where p.pid = f.pid and p.clientid is null";
+				String query2 = "select * from user where userid = ?";
+		 
+				 PreparedStatement preparedStmt = con.prepareStatement(query);
+				 
+				 //Creating resultset to read values from the database
+				 ResultSet rs = preparedStmt.executeQuery();
+				 ResultSet rs2 ;
 			 while(rs.next()) {
 				 String projectid = rs.getString("pid");
 				 String name = rs.getString("topic");
-				 String researcher = rs.getString("firstName") + " " + rs.getString("lastName");
-				 String status = rs.getString("status");
+				 String id = rs.getString("researcherid");
+				 String researcher = "";				 String status = rs.getString("status");
 				 String price = rs.getString("price");
+				 
+				 PreparedStatement preparedStmt2 = con.prepareStatement(query2);
+				 preparedStmt2.setString(1, id);
+				 rs2 = preparedStmt2.executeQuery();
+				 
+				 while(rs2.next()) {
+					  researcher = rs2.getString("firstName") + " " + rs2.getString("lastName");
+
+					 
+				 }
 				 
 				 output += "<tr><td>" + projectid + "</td>";
 				 output += "<td>" + name + "</td>";

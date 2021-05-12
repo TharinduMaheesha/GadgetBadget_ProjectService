@@ -14,13 +14,13 @@
 
 
 	<div class="container" >
-		<button id = "btnSave" class="btn btn-primary" style = "margin : 20px" >Add New Project</button>
+		<button id = "btnAdd" class="btn btn-primary" style = "margin : 20px" >Add New Project</button>
 	
 		<div class="row" id = "formContainer">
 			<div class="col-6"> 
-				 <form id="formItem" name="formItem">
+				 <form id="formProject" name="formItem">
 					 Project Topic: 
-					 <input id="itemCode" name="itemCode" type="text" 
+					 <input id="projectName" name="projectName" type="text" 
 					 class="form-control form-control-sm">
 					 <br> Project Type: <br>
 					 <div class="form-check form-check-inline">
@@ -32,7 +32,7 @@
 					  <label class="form-check-label" for="inlineRadio2">Unfinished</label>
 					</div><br>
 					 <br><label id = "fund">Funds Required: </label><label id = "price">Project Price:  </label>  
-					 <input id="projFund" name="itemPrice" type="text" 
+					 <input id="projFund" name="projFund" type="text" 
 					 class="form-control form-control-sm">
 					 <br>
 					 <input id="btnSave" name="btnSave" type="button" value="Save" 
@@ -43,22 +43,22 @@
 					 name="hidItemIDSave" value="">
 				</form>
 				
-				<div id="alertSuccess" class="alert alert-success"></div>
-				<div id="alertError" class="alert alert-danger"></div>
+				<div id="alertSuccess" class="alert alert-success" style = "margin-top : 20px"></div>
+				<div id="alertError" class="alert alert-danger" style = "margin-top : 20px"></div>
 				<br>
 			</div>
 		</div>	
 		 <input id="btnViewFinished" name="btnViewFinished" type="button" value="View Finished Projects" class="btn btn-primary">
 		 <input id="btnViewUnfinished" name="btnViewUnfinished" type="button" value="View Unfinished Projects" class="btn btn-primary">
-		 
-		<div id = "unfinprojectscontainer">
+		 <br>
+		<div id = "unfinprojectscontainer" style = "margin-top : 20px" >
 			<%
 				Project projObject = new Project();
-				out.print(projObject.readUnfinishedProjects("1001"));
+				out.print(projObject.readUnfinishedProjects("1002"));
 			 %>
 		</div>
 		
-		<div id = "finprojectscontainer">
+		<div id = "finprojectscontainer" style = "margin-top : 20px">
 			<%
 				out.print(projObject.readFinishedProjects("1002"));
 			 %>

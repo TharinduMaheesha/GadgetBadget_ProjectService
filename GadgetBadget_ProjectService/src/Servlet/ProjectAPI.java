@@ -7,12 +7,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.Project;
+
 /**
  * Servlet implementation class ProjectAPI
  */
 @WebServlet("/ProjectAPI")
 public class ProjectAPI extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private Project projObj = new Project();
 
     /**
      * Default constructor. 
@@ -26,15 +29,28 @@ public class ProjectAPI extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+			
+		}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		String topic = request.getParameter("projectName");
+		String type = request.getParameter("projectType");
+		String price = request.getParameter("projFund");
+		String researcherID = "1002";
+		
+		String output = "";
+		
+		if(type.equalsIgnoreCase("finished"))
+				 output = projObj.insertFinishedProject(researcherID, topic, "Not Paid", price);
+		else if(type.equalsIgnoreCase("unfinished"))
+			 output = projObj.insertUnfinishedProject(researcherID, topic, "Not Paid", price);
+		
+		
+		response.getWriter().write(output);
 	}
 
 	/**

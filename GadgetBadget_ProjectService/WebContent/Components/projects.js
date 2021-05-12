@@ -16,7 +16,7 @@ if ($("#alertSuccess").text().trim() == "")
  
 }); 
 
-$(document).on("click", "#btnSave", function(event){
+$(document).on("click", "#btnAdd", function(event){
 	 $("#formContainer").show(); 
 
 	
@@ -61,5 +61,89 @@ $(document).on("click", "#projectType", function(){
 	}
 });
 
+function validateItemForm()
+{ 
+		// NAME
+	if ($("#projectName").val().trim() == "") 
+	 { 
+	 return "Insert Project name."; 
+	 } 
+	// GENDER
+	if ($('input[name="projectType"]:checked').length === 0) 
+	 { 
+	 return "Select Project Type."; 
+	 } 
+	// YEAR
+	if ($("#projFund").val() == "") 
+	 { 
+	 return "Select Amount"; 
+	 } 
+	return true; 
 
+}
+
+$(document).on("click", "#btnSave", function(event)
+{ 
+	// Clear alerts---------------------
+	 $("#alertSuccess").text(""); 
+	 $("#alertSuccess").hide(); 
+	 $("#alertError").text(""); 
+	 $("#alertError").hide(); 
+	// Form validation-------------------
+	var status = validateItemForm(); 
+	if (status != true) 
+	 { 
+		 $("#alertError").text(status); 
+		 $("#alertError").show(); 
+		 return; 
+	 } 
+	// If valid------------------------
+	var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT"; 
+	 $.ajax( 
+	 { 
+		 url : "ProjectAPI", 
+		 type : type, 
+		 data : $("#formProject").serialize(), 
+		 dataType : "text", 
+		 complete : function(response, status) 
+	 { 
+	 onProjectSaveComplete(response.responseText, status); 
+ } 
+ }); 
+});
+
+
+function onProjectSaveComplete(response, status)
+{ 
+	if (status == "success") 
+	 { 
+		 var resultSet = JSON.parse(response); 
+		 if (resultSet.status.trim() == "success") 
+		 { 
+			 $("#alertSuccess").text("Successfully saved."); 
+			 $("#alertSuccess").show(); 
+			 $("#finprojectscontainer").html(resultSet.data); 
+			$("#unfinprojectscontainer").html(resultSet.data); 
+
+			 $("#formProject")[0].reset;
+		 } 
+		else if (resultSet.status.trim() == "error") 
+		 { 
+			 $("#alertError").text(resultSet.data); 
+			 $("#alertError").show(); 
+		 } 
+	} 
+	else if (status == "error") 
+	{ 
+		 $("#alertError").text("Error while saving."); 
+		 $("#alertError").show(); 
+	} 
+	else
+	{ 
+		 $("#alertError").text("Unknown error while saving.."); 
+		 $("#alertError").show(); 
+	} 
+		 $("#hidItemIDSave").val(""); 
+		 $("#formItem")[0].reset(); 
+}
 
